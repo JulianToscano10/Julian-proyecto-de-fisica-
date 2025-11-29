@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caída Libre - Simulador Interactivo</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <!-- Partículas de fondo -->
+    <div class="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-glow"></div>
+        <h1 class="title-glow">⚡ Caída Libre</h1>
+        <p class="subtitle">Simulador Interactivo de Física</p>
+    </header>
+
+    <div class="container">
+        <!-- Panel de Control -->
+        <aside class="control-panel">
+            <div class="panel-header">
+                <h2>🎛️ Parámetros</h2>
+            </div>
+
+            <div class="control-group">
+                <label for="altura">
+                    <span class="label-icon">📏</span>
+                    Altura Inicial (m)
+                </label>
+                <input type="range" id="altura" min="10" max="200" value="130" step="5">
+                <span class="value-display" id="alturaValue">130 m</span>
+            </div>
+
+            <div class="control-group">
+                <label for="masa">
+                    <span class="label-icon">⚖️</span>
+                    Masa del Objeto (kg)
+                </label>
+                <input type="range" id="masa" min="0.5" max="10" value="1.15" step="0.05">
+                <span class="value-display" id="masaValue">1.15 kg</span>
+            </div>
+
+            <div class="control-group">
+                <label for="gravedad">
+                    <span class="label-icon">🌍</span>
+                    Gravedad (m/s²)
+                </label>
+                <input type="range" id="gravedad" min="1" max="15" value="9.81" step="0.1">
+                <span class="value-display" id="gravedadValue">9.81 m/s²</span>
+            </div>
+
+            <div class="objeto-selector">
+                <h3>Selecciona un Objeto</h3>
+                <div class="objetos-grid">
+                    <button class="objeto-btn active" data-objeto="pelota">🏀 Pelota</button>
+                    <button class="objeto-btn" data-objeto="piedra">🪨 Piedra</button>
+                    <button class="objeto-btn" data-objeto="pluma">🪶 Pluma</button>
+                    <button class="objeto-btn" data-objeto="martillo">🔨 Martillo</button>
+                </div>
+            </div>
+
+            <div class="buttons-group">
+                <button class="btn-magic btn-start" id="btnStart">
+                    <span class="btn-glow"></span>
+                    ▶️ Iniciar
+                </button>
+                <button class="btn-magic btn-pause" id="btnPause">
+                    <span class="btn-glow"></span>
+                    ⏸️ Pausar
+                </button>
+                <button class="btn-magic btn-reset" id="btnReset">
+                    <span class="btn-glow"></span>
+                    🔄 Reiniciar
+                </button>
+            </div>
+
+            <div class="info-panel">
+                <h3>📊 Datos en Tiempo Real</h3>
+                <div class="info-item">
+                    <span>Tiempo:</span>
+                    <span class="info-value" id="tiempo">0.00 s</span>
+                </div>
+                <div class="info-item">
+                    <span>Velocidad:</span>
+                    <span class="info-value" id="velocidad">0.00 m/s</span>
+                </div>
+                <div class="info-item">
+                    <span>Altura:</span>
+                    <span class="info-value" id="alturaActual">130.00 m</span>
+                </div>
+                <div class="info-item">
+                    <span>Energía Cinética:</span>
+                    <span class="info-value" id="energiaCinetica">0.00 J</span>
+                </div>
+                <div class="info-item">
+                    <span>Energía Potencial:</span>
+                    <span class="info-value" id="energiaPotencial">0.00 J</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Área de Simulación -->
+        <main class="simulation-area">
+            <div class="canvas-container">
+                <canvas id="simulationCanvas"></canvas>
+                <div class="ground"></div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>📈 Velocidad vs Tiempo</h3>
+                    <canvas id="velocityChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>📉 Altura vs Tiempo</h3>
+                    <canvas id="heightChart"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sección de Teoría -->
+    <section class="theory-section">
+        <div class="theory-container">
+            <h2 class="section-title">📚 Teoría de Caída Libre</h2>
+            
+            <div class="theory-intro">
+                <p>La caída libre es uno de los fenómenos más fundamentales en física, estudiado desde la antigüedad por filósofos y científicos. Galileo Galilei fue el primero en demostrar experimentalmente que todos los objetos caen con la misma aceleración, revolucionando nuestra comprensión del movimiento.</p>
+            </div>
+
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <div class="card-icon">🎯</div>
+                    <h3>¿Qué es la Caída Libre?</h3>
+                    <p>La caída libre es el movimiento vertical de un objeto bajo la acción exclusiva de la fuerza gravitacional, sin considerar la resistencia del aire u otras fuerzas externas.</p>
+                    <div class="theory-detail">
+                        <p><strong>Principio fundamental:</strong> En ausencia de resistencia del aire, todos los objetos caen con la misma aceleración gravitacional, sin importar su masa, forma o composición. Una pluma y un martillo caerían al mismo tiempo en el vacío.</p>
+                        <p><strong>Condiciones ideales:</strong> Se considera caída libre cuando la única fuerza actuante es el peso del objeto (W = mg).</p>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <div class="card-icon">🌍</div>
+                    <h3>Aceleración Gravitacional</h3>
+                    <p>La aceleración de la gravedad (g) es la tasa a la que la velocidad de un objeto en caída libre aumenta por unidad de tiempo.</p>
+                    <div class="theory-detail">
+                        <p><strong>Valor estándar:</strong> g = 9.81 m/s² (en la superficie terrestre)</p>
+                        <p><strong>Significado:</strong> Cada segundo, la velocidad de caída aumenta en 9.81 m/s.</p>
+                        <p><strong>Variaciones:</strong> g varía ligeramente según la altitud y latitud (9.78 m/s² en el ecuador, 9.83 m/s² en los polos).</p>
+                        <p><strong>Dirección:</strong> Siempre apunta hacia el centro de la Tierra (hacia abajo).</p>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <div class="card-icon">📐</div>
+                    <h3>Ecuaciones del Movimiento</h3>
+                    <p>Tres ecuaciones fundamentales describen completamente el movimiento de caída libre:</p>
+                    <div class="formulas">
+                        <div class="formula-item">
+                            <p><strong>1. Velocidad en función del tiempo:</strong></p>
+                            <p class="formula-main">v = v₀ + gt</p>
+                            <p class="formula-desc">Donde v₀ es la velocidad inicial (usualmente 0) y t es el tiempo transcurrido.</p>
+                        </div>
+                        <div class="formula-item">
+                            <p><strong>2. Posición en función del tiempo:</strong></p>
+                            <p class="formula-main">y = y₀ + v₀t + ½gt²</p>
+                            <p class="formula-desc">Donde y₀ es la altura inicial desde donde se suelta el objeto.</p>
+                        </div>
+                        <div class="formula-item">
+                            <p><strong>3. Velocidad-posición (sin tiempo):</strong></p>
+                            <p class="formula-main">v² = v₀² + 2g(y - y₀)</p>
+                            <p class="formula-desc">Útil cuando no conocemos el tiempo pero queremos relacionar velocidad y posición.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Características Principales</h3>
+                    <ul>
+                        <li><strong>Aceleración constante:</strong> g = 9.81 m/s² (siempre hacia abajo)</li>
+                        <li><strong>MRUA:</strong> Es un Movimiento Rectilíneo Uniformemente Acelerado en dirección vertical</li>
+                        <li><strong>Independencia de la masa:</strong> Objetos de diferente masa caen simultáneamente</li>
+                        <li><strong>Trayectoria rectilínea:</strong> El movimiento es en línea recta vertical</li>
+                        <li><strong>Velocidad creciente:</strong> La velocidad aumenta linealmente con el tiempo</li>
+                        <li><strong>Reversibilidad:</strong> Las ecuaciones aplican tanto para caída como para lanzamiento vertical</li>
+                    </ul>
+                </div>
+
+                <div class="theory-card">
+                    <div class="card-icon">💡</div>
+                    <h3>Energía en Caída Libre</h3>
+                    <p>Durante la caída libre, ocurre una transformación continua entre energía potencial gravitacional y energía cinética.</p>
+                    <div class="theory-detail">
+                        <p><strong>Energía Potencial Gravitacional:</strong></p>
+                        <p class="formula-main">Ep = mgh</p>
+                        <p class="formula-desc">Donde m es la masa, g la gravedad y h la altura. Representa la energía almacenada por la posición del objeto.</p>
+                        
+                        <p><strong>Energía Cinética:</strong></p>
+                        <p class="formula-main">Ec = ½mv²</p>
+                        <p class="formula-desc">Energía asociada al movimiento del objeto. Aumenta conforme el objeto acelera.</p>
+                        
+                        <p><strong>Principio de Conservación:</strong></p>
+                        <p class="formula-main">Em = Ep + Ec = constante</p>
+                        <p class="formula-desc">La energía mecánica total se conserva: la pérdida de Ep se convierte en ganancia de Ec.</p>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <div class="card-icon">🔄</div>
+                    <h3>Lanzamiento Vertical</h3>
+                    <p>Cuando un objeto se lanza hacia arriba, experimenta el mismo tipo de movimiento pero con consideraciones especiales.</p>
+                    <div class="theory-detail">
+                        <p><strong>Ascenso:</strong> La velocidad disminuye uniformemente hasta llegar a cero en el punto más alto.</p>
+                        <p><strong>Punto máximo:</strong> v = 0, la altura máxima se alcanza cuando la velocidad es cero.</p>
+                        <p><strong>Descenso:</strong> El objeto cae libremente desde el reposo en el punto más alto.</p>
+                        <p><strong>Simetría:</strong> El tiempo de subida es igual al tiempo de bajada, y la velocidad final tiene la misma magnitud que la inicial (pero dirección opuesta).</p>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <div class="card-icon">🧪</div>
+                    <h3>Consideraciones Prácticas</h3>
+                    <div class="theory-detail">
+                        <p><strong>Resistencia del aire:</strong> En la realidad, el aire ejerce una fuerza de resistencia que aumenta con la velocidad. Por esto, los objetos eventualmente alcanzan una velocidad terminal.</p>
+                        <p><strong>Velocidad terminal:</strong> Velocidad máxima que alcanza un objeto cuando la resistencia del aire iguala a su peso. Depende de la forma, área y masa del objeto.</p>
+                        <p><strong>Aproximación válida:</strong> Para objetos densos cayendo desde alturas moderadas, la caída libre es una excelente aproximación (error < 5%).</p>
+                        <p><strong>Casos extremos:</strong> Un paracaídas o una pluma NO siguen caída libre en condiciones normales debido a la alta resistencia del aire.</p>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <div class="card-icon">📊</div>
+                    <h3>Análisis Gráfico</h3>
+                    <div class="theory-detail">
+                        <p><strong>Gráfica posición-tiempo:</strong> Parábola con concavidad hacia abajo (si tomamos y positivo hacia arriba).</p>
+                        <p><strong>Gráfica velocidad-tiempo:</strong> Línea recta con pendiente negativa igual a -g.</p>
+                        <p><strong>Gráfica aceleración-tiempo:</strong> Línea horizontal constante en -g.</p>
+                        <p><strong>Interpretación:</strong> La pendiente de y vs t en cualquier instante da la velocidad instantánea.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="theory-footer">
+                <div class="important-note">
+                    <h4>⚠️ Convención de Signos</h4>
+                    <p>Es fundamental establecer un sistema de referencia claro:</p>
+                    <ul>
+                        <li><strong>Hacia arriba positivo:</strong> g = -9.81 m/s² (más común en física)</li>
+                        <li><strong>Hacia abajo positivo:</strong> g = +9.81 m/s²</li>
+                        <li>La elección afecta los signos en las ecuaciones, pero no los resultados físicos finales.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1>📐 Simulador de Vectores</h1>
+            <p>Aprende y visualiza operaciones vectoriales de forma interactiva</p>
+        </div>
+    </header>
+
+    <!-- Navegación de Pestañas -->
+    <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="teoria">📚 Teoría</button>
+        <button class="tab-btn" data-tab="simulador">🎮 Simulador</button>
+        <button class="tab-btn" data-tab="operaciones">🔢 Operaciones</button>
+        <button class="tab-btn" data-tab="ejemplos">💡 Ejemplos</button>
+    </nav>
+
+    <!-- Contenedor Principal -->
+    <main class="main-container">
+        
+        <!-- PESTAÑA: TEORÍA -->
+        <section id="teoria" class="tab-content active">
+            <div class="theory-container">
+                <h2 class="section-title">📚 Teoría de Vectores</h2>
+                
+                <div class="theory-intro">
+                    <p>Los vectores son magnitudes que poseen tanto magnitud (tamaño) como dirección, a diferencia de las magnitudes escalares que solo tienen magnitud. Son fundamentales en física para representar fuerzas, velocidades, aceleraciones y muchas otras cantidades físicas.</p>
+                </div>
+
+                <div class="theory-grid">
+                    <!-- Card 1: ¿Qué es un Vector? -->
+                    <div class="theory-card">
+                        <div class="card-icon">📍</div>
+                        <h3>¿Qué es un Vector?</h3>
+                        <p>Un vector es una cantidad física que se caracteriza por tener:</p>
+                        <div class="theory-detail">
+                            <p><strong>🎯 Magnitud:</strong> La longitud o tamaño del vector (valor numérico).</p>
+                            <p><strong>🧭 Dirección:</strong> La orientación en el espacio (ángulo).</p>
+                            <p><strong>➡️ Sentido:</strong> Hacia dónde apunta el vector en esa dirección.</p>
+                            <p><strong>📌 Punto de aplicación:</strong> El origen desde donde actúa el vector.</p>
+                        </div>
+                        <div class="example-box">
+                            <strong>Ejemplos de magnitudes vectoriales:</strong>
+                            <ul>
+                                <li>Desplazamiento</li>
+                                <li>Velocidad</li>
+                                <li>Aceleración</li>
+                                <li>Fuerza</li>
+                                <li>Momento</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Representación -->
+                    <div class="theory-card">
+                        <div class="card-icon">✏️</div>
+                        <h3>Representación de Vectores</h3>
+                        <div class="theory-detail">
+                            <p><strong>Notación geométrica:</strong> Flecha con origen y extremo.</p>
+                            <p><strong>Notación algebraica:</strong> v⃗ = (vₓ, vᵧ) o v⃗ = vₓî + vᵧĵ</p>
+                            <p><strong>Forma polar:</strong> v⃗ = |v⃗|(cos θ, sen θ)</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Componentes rectangulares:</p>
+                            <p class="formula">vₓ = |v⃗| cos(θ)</p>
+                            <p class="formula">vᵧ = |v⃗| sen(θ)</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Magnitud desde componentes:</p>
+                            <p class="formula">|v⃗| = √(vₓ² + vᵧ²)</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Dirección desde componentes:</p>
+                            <p class="formula">θ = arctan(vᵧ / vₓ)</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Suma de Vectores -->
+                    <div class="theory-card">
+                        <div class="card-icon">➕</div>
+                        <h3>Suma de Vectores</h3>
+                        <div class="theory-detail">
+                            <p><strong>Método del paralelogramo:</strong> Se colocan ambos vectores con el mismo origen y se completa un paralelogramo. La diagonal es el vector resultante.</p>
+                            <p><strong>Método del triángulo:</strong> Se coloca el origen del segundo vector en el extremo del primero. El resultante va del origen del primero al extremo del segundo.</p>
+                            <p><strong>Método analítico:</strong> Se suman las componentes correspondientes.</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Suma por componentes:</p>
+                            <p class="formula">R⃗ = A⃗ + B⃗</p>
+                            <p class="formula">Rₓ = Aₓ + Bₓ</p>
+                            <p class="formula">Rᵧ = Aᵧ + Bᵧ</p>
+                        </div>
+                        <div class="note-box">
+                            <strong>⚠️ Propiedades:</strong>
+                            <p>✓ Conmutativa: A⃗ + B⃗ = B⃗ + A⃗</p>
+                            <p>✓ Asociativa: (A⃗ + B⃗) + C⃗ = A⃗ + (B⃗ + C⃗)</p>
+                            <p>✓ Elemento neutro: A⃗ + 0⃗ = A⃗</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Resta de Vectores -->
+                    <div class="theory-card">
+                        <div class="card-icon">➖</div>
+                        <h3>Resta de Vectores</h3>
+                        <div class="theory-detail">
+                            <p>La resta de vectores es equivalente a sumar el vector opuesto.</p>
+                            <p><strong>Vector opuesto:</strong> -A⃗ tiene la misma magnitud que A⃗ pero sentido contrario.</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Resta por componentes:</p>
+                            <p class="formula">R⃗ = A⃗ - B⃗ = A⃗ + (-B⃗)</p>
+                            <p class="formula">Rₓ = Aₓ - Bₓ</p>
+                            <p class="formula">Rᵧ = Aᵧ - Bᵧ</p>
+                        </div>
+                        <div class="example-box">
+                            <strong>Interpretación física:</strong>
+                            <p>Si A⃗ representa la posición final y B⃗ la posición inicial, entonces A⃗ - B⃗ representa el desplazamiento.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Producto Escalar -->
+                    <div class="theory-card">
+                        <div class="card-icon">✖️</div>
+                        <h3>Producto Escalar (Punto)</h3>
+                        <div class="theory-detail">
+                            <p>El producto escalar o producto punto de dos vectores es un <strong>número</strong> (escalar).</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Definición geométrica:</p>
+                            <p class="formula">A⃗ · B⃗ = |A⃗| |B⃗| cos(θ)</p>
+                            <p class="formula-desc">donde θ es el ángulo entre los vectores</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Forma algebraica:</p>
+                            <p class="formula">A⃗ · B⃗ = AₓBₓ + AᵧBᵧ</p>
+                        </div>
+                        <div class="note-box">
+                            <strong>📊 Interpretaciones:</strong>
+                            <p>• Si A⃗ · B⃗ > 0 → ángulo agudo (< 90°)</p>
+                            <p>• Si A⃗ · B⃗ = 0 → vectores perpendiculares</p>
+                            <p>• Si A⃗ · B⃗ < 0 → ángulo obtuso (> 90°)</p>
+                        </div>
+                        <div class="example-box">
+                            <strong>Aplicación física:</strong>
+                            <p>El trabajo realizado por una fuerza: W = F⃗ · d⃗</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Producto Vectorial -->
+                    <div class="theory-card">
+                        <div class="card-icon">⚡</div>
+                        <h3>Producto Vectorial (Cruz)</h3>
+                        <div class="theory-detail">
+                            <p>El producto vectorial o producto cruz de dos vectores es otro <strong>vector</strong> perpendicular a ambos.</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Magnitud:</p>
+                            <p class="formula">|A⃗ × B⃗| = |A⃗| |B⃗| sen(θ)</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">En 2D (resultado en eje z):</p>
+                            <p class="formula">A⃗ × B⃗ = (AₓBᵧ - AᵧBₓ)k̂</p>
+                        </div>
+                        <div class="note-box">
+                            <strong>🧭 Dirección:</strong>
+                            <p>Se determina por la regla de la mano derecha: dedos desde A⃗ hacia B⃗, el pulgar indica la dirección de A⃗ × B⃗</p>
+                        </div>
+                        <div class="example-box">
+                            <strong>Aplicaciones físicas:</strong>
+                            <p>• Momento de una fuerza: τ⃗ = r⃗ × F⃗</p>
+                            <p>• Fuerza magnética: F⃗ = q(v⃗ × B⃗)</p>
+                            <p>• Momento angular: L⃗ = r⃗ × p⃗</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 7: Vectores Unitarios -->
+                    <div class="theory-card">
+                        <div class="card-icon">🎯</div>
+                        <h3>Vectores Unitarios</h3>
+                        <div class="theory-detail">
+                            <p>Un vector unitario es un vector con magnitud igual a 1 que indica únicamente una dirección.</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Vector unitario de A⃗:</p>
+                            <p class="formula">û = A⃗ / |A⃗|</p>
+                        </div>
+                        <div class="example-box">
+                            <strong>Vectores unitarios básicos:</strong>
+                            <p>• î = (1, 0) → dirección x positiva</p>
+                            <p>• ĵ = (0, 1) → dirección y positiva</p>
+                            <p>• k̂ = (0, 0, 1) → dirección z positiva</p>
+                        </div>
+                        <div class="note-box">
+                            <strong>Expresión de vectores:</strong>
+                            <p>Cualquier vector se puede expresar como: A⃗ = Aₓî + Aᵧĵ + Aₖk̂</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 8: Proyecciones -->
+                    <div class="theory-card">
+                        <div class="card-icon">📐</div>
+                        <h3>Proyección de Vectores</h3>
+                        <div class="theory-detail">
+                            <p>La proyección de un vector A⃗ sobre otro vector B⃗ es la componente de A⃗ en la dirección de B⃗.</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Proyección escalar:</p>
+                            <p class="formula">proj_B A = (A⃗ · B⃗) / |B⃗|</p>
+                        </div>
+                        <div class="formula-box">
+                            <p class="formula-title">Proyección vectorial:</p>
+                            <p class="formula">proj⃗_B A⃗ = [(A⃗ · B⃗) / |B⃗|²] B⃗</p>
+                        </div>
+                        <div class="example-box">
+                            <strong>Aplicación:</strong>
+                            <p>Descomponer una fuerza en direcciones específicas, como en planos inclinados.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nota final -->
+                <div class="final-note">
+                    <h4>🎓 Resumen Importante</h4>
+                    <p>Los vectores son herramientas matemáticas esenciales en física. Dominar las operaciones vectoriales te permitirá analizar movimientos, fuerzas, campos y muchos otros fenómenos físicos de manera precisa y elegante. La clave está en entender tanto la interpretación geométrica como el manejo algebraico.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PESTAÑA: SIMULADOR -->
+        <section id="simulador" class="tab-content">
+            <div class="simulator-container">
+                <h2 class="section-title">🎮 Simulador Interactivo</h2>
+                
+                <div class="simulator-layout">
+                    <!-- Panel de Control -->
+                    <div class="control-panel">
+                        <h3>⚙️ Controles</h3>
+                        
+                        <!-- Vector A -->
+                        <div class="vector-controls">
+                            <h4 style="color: #ff6b6b;">Vector A (Rojo)</h4>
+                            
+                            <label>
+                                Magnitud A: <span id="magA-value">5.0</span>
+                                <input type="range" id="magA" min="0" max="10" step="0.1" value="5">
+                            </label>
+                            
+                            <label>
+                                Ángulo A: <span id="angleA-value">45°</span>
+                                <input type="range" id="angleA" min="0" max="360" step="1" value="45">
+                            </label>
+                            
+                            <div class="components-display">
+                                <p>Componentes:</p>
+                                <p>Aₓ = <span id="ax-value">0</span></p>
+                                <p>Aᵧ = <span id="ay-value">0</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Vector B -->
+                        <div class="vector-controls">
+                            <h4 style="color: #4ecdc4;">Vector B (Cyan)</h4>
+                            
+                            <label>
+                                Magnitud B: <span id="magB-value">4.0</span>
+                                <input type="range" id="magB" min="0" max="10" step="0.1" value="4">
+                            </label>
+                            
+                            <label>
+                                Ángulo B: <span id="angleB-value">135°</span>
+                                <input type="range" id="angleB" min="0" max="360" step="1" value="135">
+                            </label>
+                            
+                            <div class="components-display">
+                                <p>Componentes:</p>
+                                <p>Bₓ = <span id="bx-value">0</span></p>
+                                <p>Bᵧ = <span id="by-value">0</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Operaciones -->
+                        <div class="operation-controls">
+                            <h4>🔢 Operación</h4>
+                            <select id="operation">
+                                <option value="sum">A + B (Suma)</option>
+                                <option value="subtract">A - B (Resta)</option>
+                                <option value="dot">A · B (Producto Escalar)</option>
+                                <option value="cross">A × B (Producto Vectorial)</option>
+                            </select>
+                        </div>
+
+                        <!-- Resultados -->
+                        <div class="results-display">
+                            <h4>📊 Resultados</h4>
+                            <div id="results-content">
+                                <p>Selecciona una operación para ver resultados</p>
+                            </div>
+                        </div>
+
+                        <!-- Opciones de visualización -->
+                        <div class="view-options">
+                            <h4>👁️ Visualización</h4>
+                            <label>
+                                <input type="checkbox" id="showGrid" checked> Mostrar cuadrícula
+                            </label>
+                            <label>
+                                <input type="checkbox" id="showComponents" checked> Mostrar componentes
+                            </label>
+                            <label>
+                                <input type="checkbox" id="showAngles" checked> Mostrar ángulos
+                            </label>
+                        </div>
+
+                        <button class="reset-btn" id="resetBtn">🔄 Reiniciar</button>
+                    </div>
+
+                    <!-- Canvas de Simulación -->
+                    <div class="canvas-container">
+                        <canvas id="vectorCanvas" width="700" height="700"></canvas>
+                        <div class="canvas-info">
+                            <p>💡 Ajusta los controles para ver cómo cambian los vectores</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PESTAÑA: OPERACIONES -->
+        <section id="operaciones" class="tab-content">
+            <div class="operations-container">
+                <h2 class="section-title">🔢 Calculadora de Operaciones Vectoriales</h2>
+                
+                <div class="calculator-layout">
+                    <div class="input-section">
+                        <h3>Ingresa los Vectores</h3>
+                        
+                        <div class="vector-input">
+                            <h4>Vector A</h4>
+                            <div class="input-group">
+                                <label>Aₓ: <input type="number" id="calc-ax" value="3" step="0.1"></label>
+                                <label>Aᵧ: <input type="number" id="calc-ay" value="4" step="0.1"></label>
+                            </div>
+                        </div>
+
+                        <div class="vector-input">
+                            <h4>Vector B</h4>
+                            <div class="input-group">
+                                <label>Bₓ: <input type="number" id="calc-bx" value="1" step="0.1"></label>
+                                <label>Bᵧ: <input type="number" id="calc-by" value="2" step="0.1"></label>
+                            </div>
+                        </div>
+
+                        <button class="calculate-btn" id="calculateBtn">Calcular Todas las Operaciones</button>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>Resultados</h3>
+                        <div id="calc-results" class="calc-results-display">
+                            <p class="placeholder">Los resultados aparecerán aquí...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PESTAÑA: EJEMPLOS -->
+        <section id="ejemplos" class="tab-content">
+            <div class="examples-container">
+                <h2 class="section-title">💡 Ejemplos Prácticos</h2>
+                
+                <div class="examples-grid">
+                    <!-- Ejemplo 1 -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-number">1</span>
+                            <h3>Suma de Fuerzas</h3>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Problema:</strong> Dos fuerzas actúan sobre un objeto. F₁ = 30N a 0° y F₂ = 40N a 90°. ¿Cuál es la fuerza resultante?</p>
+                            <div class="example-solution">
+                                <p><strong>Solución:</strong></p>
+                                <p>F₁ = (30, 0) N</p>
+                                <p>F₂ = (0, 40) N</p>
+                                <p>F_resultante = F₁ + F₂ = (30, 40) N</p>
+                                <p>|F_resultante| = √(30² + 40²) = 50 N</p>
+                                <p>θ = arctan(40/30) = 53.13°</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ejemplo 2 -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-number">2</span>
+                            <h3>Desplazamiento</h3>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Problema:</strong> Un objeto se mueve 5m al Este y luego 12m al Norte. ¿Cuál es su desplazamiento total?</p>
+                            <div class="example-solution">
+                                <p><strong>Solución:</strong></p>
+                                <p>d₁ = (5, 0) m</p>
+                                <p>d₂ = (0, 12) m</p>
+                                <p>d_total = (5, 12) m</p>
+                                <p>|d_total| = √(5² + 12²) = 13 m</p>
+                                <p>θ = arctan(12/5) = 67.38° al Norte del Este</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ejemplo 3 -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-number">3</span>
+                            <h3>Trabajo Mecánico</h3>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Problema:</strong> Una fuerza F = (10, 5) N desplaza un objeto d = (3, 4) m. ¿Cuánto trabajo se realiza?</p>
+                            <div class="example-solution">
+                                <p><strong>Solución:</strong></p>
+                                <p>W = F · d</p>
+                                <p>W = (10)(3) + (5)(4)</p>
+                                <p>W = 30 + 20 = 50 J</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ejemplo 4 -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-number">4</span>
+                            <h3>Velocidad Relativa</h3>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Problema:</strong> Un barco viaja a 20 m/s al Norte. Una corriente va a 5 m/s al Este. ¿Cuál es la velocidad resultante del barco?</p>
+                            <div class="example-solution">
+                                <p><strong>Solución:</strong></p>
+                                <p>v_barco = (0, 20) m/s</p>
+                                <p>v_corriente = (5, 0) m/s</p>
+                                <p>v_resultante = (5, 20) m/s</p>
+                                <p>|v_resultante| = √(5² + 20²) = 20.62 m/s</p>
+                                <p>θ = arctan(20/5) = 75.96° al Norte del Este</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ejemplo 5 -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-number">5</span>
+                            <h3>Plano Inclinado</h3>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Problema:</strong> Un bloque de 10 kg está en un plano inclinado 30°. Descompón su peso en componentes paralela y perpendicular.</p>
+                            <div class="example-solution">
+                                <p><strong>Solución:</strong></p>
+                                <p>Peso = mg = (10)(9.8) = 98 N (hacia abajo)</p>
+                                <p>W_paralelo = mg sen(30°) = 98(0.5) = 49 N</p>
+                                <p>W_perpendicular = mg cos(30°) = 98(0.866) = 84.87 N</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ejemplo 6 -->
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="example-number">6</span>
+                            <h3>Producto Vectorial</h3>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Problema:</strong> Calcula el momento de una fuerza F = (4, 3) N aplicada en r = (2, 1) m desde el origen.</p>
+                            <div class="example-solution">
+                                <p><strong>Solución:</strong></p>
+                                <p>τ = r × F</p>
+                                <p>τ_z = (2)(3) - (1)(4) = 6 - 4 = 2 N·m</p>
+                                <p>El momento es 2 N·m en dirección perpendicular al plano (eje z)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>🎓Nestor Julian Toscano Gonzalez
+        <p>Proyecto de fundamentos de fisica de ingieneria informatica 
+    </footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <footer class="footer">
+        <p>✨ Simulador de Física - Caída Libre | Aprende experimentando ✨</p>
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+</html>
